@@ -12,7 +12,9 @@
             clearInterval(plot.pinger);
             plot.onPong();
         }
-        else if (message.type === 'click') plot.onClick(message);
+        else if (message.type === 'click') {
+            plot.onClick(message);
+        }
         else if (message.task === 'getAttributes') plot.fig = message.response;
 
     }
@@ -38,7 +40,7 @@
         var d = plot.fig.data[0],
             yi = message.points[0].pointNumber[0],
             xi = message.points[0].pointNumber[1];
-        
+
         var t = d.x,
             v = d.z[yi],
             n = d.y[yi];
@@ -57,6 +59,17 @@
                 'newIndices': 1
             });
         }
+
+        var anns = plot.fig.layout.annotations;
+        anns[3] = {
+            showarrow: false,
+            xref: 'x',
+            x: xi,
+            yref: 'paper',
+            y: 0,
+            yanchor:'top',
+            text: t[xi]
+        };
 
         post({
             'task': 'relayout',
@@ -77,15 +90,7 @@
                         opacity: 0.5
                     }
                 ],
-                'annotations[3]': {
-                    showarrow: false,
-                    xref: 'x',
-                    x: xi,
-                    yref: 'paper',
-                    y: 0,
-                    yanchor:'top',
-                    text: t[xi]
-                }
+                annotations: anns
             }
         });
 
